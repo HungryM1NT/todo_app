@@ -1,0 +1,119 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TODO App</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <header>
+        {% if user.is_authenticated %}
+            <h1>{{ request.user.username }}</h1>
+            <form action="{% url 'app:logout' %}">
+                <button class="add-button" type="submit">Logout</button>
+            </form>
+        {% else %}
+            <button class="add-button" id="show-login-popup">Login</button>
+        {% endif %}
+    </header>
+    {% if user.is_authenticated %}
+    {% else %}
+        <div class="overlay" id="login-popup">
+            <div class="popup-container" id="login-container">
+                <form method="post" id="form-register" style="display: none;" action="{% url 'app:registration' %}">
+                    {% csrf_token %}
+                    <h2>Sign up</h2>
+                    <div class="form-field">
+                        {{ registration_form.username }}
+                    </div>
+                    <div class="form-field">
+                        {{ registration_form.email }}
+                    </div>
+                    <div class="form-field">
+                        {{ registration_form.password1 }}
+                    </div>
+                    <div class="form-field">
+                        {{ registration_form.password2 }}
+                    </div>
+                    <div class="form-field">
+                        <button id="register-submit" class="edit">Sign up</button>
+                    </div>
+                    <div class="form-field">
+                        <button class="switch-button" type="button" id="login-link">To Login</button>
+                    </div>
+                </form>
+                <form method="post" id="form-login" action="{% url 'app:login' %}">
+                    {% csrf_token %}
+                    <h2>Login</h2>
+                    <div class="form-field">
+                        {{ login_form.username }}
+                    </div>
+                    <div class="form-field">
+                        {{ login_form.password }}
+                    </div>
+                    <div class="form-field">
+                        <button id="login-submit" class="edit">Login</button>
+                    </div>
+                    <div class="form-field">
+                        <button class="switch-button" type="button" id="register-link">To Sign up</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+   {% if user.is_authenticated %}
+        <div id="todo-container">
+        <button class="add-button" id="show-note-popup">&#43;</button>
+        <h2>Notes</h2>
+        <div class="overlay" id="note-popup">
+            <div class="popup-container" id="note-container">
+                <form method="post" action="{% url 'app:add_note' %}">
+                    {% csrf_token %}
+                    <h2>Add Note</h2>
+                    <div class="form-field">
+                        {{ note_form.name }}
+                    </div>
+                    <div class="form-field">
+                        {{ note_form.description }}
+                    </div>
+                    <button type="submit" id="note-create" class="edit">Add</button>
+                    <button type="button" id="note-cancel" class="delete">Cancel</button>
+                </form>
+            </div>
+        </div>
+
+        <ul id="todo-list">
+            {% for note in notes %}
+                <li>
+                    <span class="note-text">Note {{ note.number }}</span>
+                    <div class="dropdown">
+                        <span class="note-description">{{ note.name }}</span>
+                        {% if note.description %}
+                            <div class="dropdown-content">
+                                <p>{{ note.short_description }}</p>
+                                <p>{{ note.description }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="actions">
+                        <button class="edit" id="show-edit-note-popup">Edit</button>
+                        <form method="post" action="{% url 'app:delete_note' note.id %}">
+                            {% csrf_token %}
+                            <button class="delete">Delete</button>
+
+                        </form>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    </div>
+        <div class="background">
+        <object type="image/svg+xml" data="{% static 'assets/speeding_mouse.svg' %}"></object>
+    </div>
+    <script src="{% static 'js/popup.js' %}"></script>
+</body>
+</html>
