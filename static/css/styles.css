@@ -243,3 +243,9 @@ button {
     height: 100%;
     object-fit: cover; /* Resize the SVG to cover the entire background */
 }
+
+.error-field {
+    align-content: center;
+    text-align: center;
+    color: red;
+}

@@ -11,7 +11,6 @@ class UserLoginForm(AuthenticationForm):
         'placeholder': "Password",
     }))
 
-
     class Meta:
         model = User
         fields = ['username_email', 'password']
